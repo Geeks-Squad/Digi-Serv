@@ -1,10 +1,7 @@
-from docs.doc import Doc
 
-
-class DrivingLicense(Doc):
+class DrivingLicense():
     def __init__(self, image):
         self.image = image
-        super(DrivingLicense, self).__init__("Driving License")
 
     def store_info(self, DOI, DLNumber, Name, Relation, DOB):
         self.doi = DOI

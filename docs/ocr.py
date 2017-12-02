@@ -5,23 +5,6 @@ from docs.pancard import PanCard
 from docs.drivingl import DrivingLicense
 
 
-def levenshteinDistance(s1, s2):
-    if len(s1) > len(s2):
-        s1, s2 = s2, s1
-
-    distances = range(len(s1) + 1)
-    for i2, c2 in enumerate(s2):
-        distances_ = [i2+1]
-        for i1, c1 in enumerate(s1):
-            if c1 == c2:
-                distances_.append(distances[i1])
-            else:
-                distances_.append(1 + min((distances[i1], distances[i1 + 1],
-                                           distances_[-1])))
-        distances = distances_
-    return distances[-1]
-
-
 class OCR:
     def __init__(self, image, key):
         self.image = image
@@ -55,7 +38,7 @@ class OCR:
 
     def parse_ocr(self, doc_type):
         resp = self.response.json()['responses']
-        if doc_type == "PANDoc":
+        if doc_type == "PanDoc":
             panDoc = PanCard(self.image)
             data = resp['textAnnotations'][0]['description'].split('\n')
             panDoc.store_info(data[3], data[5], data[7], data[9])

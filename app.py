@@ -72,30 +72,27 @@ def signup():
 
 @app.route('/user/<id>/upload', methods=['POST'])
 # @auth.login_required
-def get_image(name):
-    data = json.loads(request.get_json(force=True))
+def get_image(id):
+    doc_type = request.headers['doctype']
     con = mysql.connect()
     cur = con.cursor()
-    if (data['c_id'] + 'pancard') not in request.files and (data['c_id'] +
-                                                            'DriverLicense') not in request.files:
-        return "400"
-    if data['type'] == 'pancard':
-        doc_type = 'PanCard'
-        image = request.files[data['c_id']] + '_PanCard'
-        filename = data['c_id'] + '_PanCard'
+    if doc_type == 'pancard':
+        image = request.files[id]
+        filename = id + '_PanCard'
     else:
-        doc_type = 'DriverLicense'
-        image = request.files[data['c_id']] + '_DriverLicense'
-        filename = data['c_id'] + '_DriverLicense'
+        image = request.files[id]
+        filename = id + '_DriverLicense'
     loc = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     image.save(loc)
-    cur.execute("INSERT INTO documents values (%s, %s, %s)", [data['type'],
-                data['c_id'], 'Submited'])
+    cur.execute("INSERT INTO documents values (%s, %s, %s)", [doc_type, id,
+                'Submited'])
     ocr = OCR(loc, "AIzaSyBdkJThmnTQ_DpX-mR6Q0O8a8xRNIVCaDw")
     ocr.request_ocr()
     doc = ocr.parse_ocr(doc_type)
     json_doc = json.dumps(doc.__dict__)
-    cur.execute("update documents set content = %s", [json_doc])
+    print(json_doc)
+    cur.execute("update documents set content = %s where c_id = %s and type\
+                = %s", [json_doc, id, doc_type])
     con.commit()
     return "200"
 
@@ -134,18 +131,12 @@ def get_user_doc_image(c_id, doc_type):
 @app.route('/user/<c_id>/<doc_id>/send/<o_id>', methods=['POST'])
 # @auth.login_required
 def send_user_docs_to(c_id, doc_id, o_id):
-    cur = mysql.get_db().cursor()
+    con = mysql.connect()
+    cur = con.cursor()
     cur.execute('insert into transaction values (%s, %s, %s, %s)', [c_id,
                 doc_id, o_id, 'Submitted'])
+    con.commit()
     return "200"
-
-
-@app.route('/user/<c_id>/sent', methods=['GET'])
-# @auth.login_required
-def get_user_sent_to(c_id):
-    cur = mysql.get_db().cursor()
-    cur.execute('select * from transaction where c_id = %s', [c_id])
-    return convert(cur)
 
 
 if __name__ == '__main__':
