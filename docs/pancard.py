@@ -1,4 +1,4 @@
-from doc import Doc
+from docs.doc import Doc
 
 
 class PanCard(Doc):

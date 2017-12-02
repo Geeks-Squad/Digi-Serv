@@ -1,8 +1,8 @@
 from base64 import b64encode
 import json
 import requests
-from pancard import PanCard
-from drivingl import DrivingLicense
+from docs.pancard import PanCard
+from docs.drivingl import DrivingLicense
 
 
 def levenshteinDistance(s1, s2):
@@ -62,13 +62,17 @@ class OCR:
             return panDoc
         elif doc_type == "DrivingLicense":
             drivl = DrivingLicense(self.image)
-            data = resp['textAnnotations'][0]['description'].split('\n')
-            print(data[0].split(" ")[1], data[1].split(" ")[1:],
-                  data[2].split(" ")[1:], data[3].split("of ")[2],
-                  data[-1])
-            drivl.store(data[0].split(" ")[1], data[1].split(" ")[1:],
-                        data[2].split(" ")[1:], data[3].split("of ")[2],
-                        data[-1])
+            print(resp)
+            data = resp[0]['textAnnotations'][0]['description'].split('\n')
+            print(data)
+            print(data[0].split(" ")[1])
+            print(data[1].split(" ")[1:])
+            print(data[2].split(" ")[1:])
+            print(data[3].split("of ")[1])
+            print(data[-2])
+            drivl.store_info(data[0].split(" ")[1], data[1].split(" ")[1:],
+                             data[2].split(" ")[1:], data[3].split("of ")[1],
+                             data[-1])
             return drivl
 
 
