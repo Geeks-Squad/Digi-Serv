@@ -70,6 +70,28 @@ def signup():
     return "200"
 
 
+@app.route('/user/rama/<id>/upload', methods=['POST'])
+# @auth.login_required
+def get_rama_image(id):
+    con = mysql.connect()
+    cur = con.cursor()
+    image1 = request.files['PanCard']
+    filename1 = id + '_PanCard'
+    image2 = request.files['DrivingLicense']
+    filename2 = id + '_DriverLicense'
+    loc1 = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
+    loc2 = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
+    image1.save(loc1)
+    image2.save(loc2)
+    print("Done")
+    cur.execute("insert into documents(type, c_id, status) values(%s,\
+                %s, %s)", ['PanCard', id, 'Uploaded'])
+    cur.execute("insert into documents(type, c_id, status) values(%s,\
+                %s, %s)", ['DrivingLicense', id, 'Uploaded'])
+    con.commit()
+    return "200"
+
+
 @app.route('/user/<id>/upload', methods=['POST'])
 # @auth.login_required
 def get_image(id):
