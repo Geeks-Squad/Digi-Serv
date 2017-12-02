@@ -76,6 +76,7 @@ def get_image(id):
     doc_type = request.headers['doctype']
     con = mysql.connect()
     cur = con.cursor()
+    print(request.files)
     if doc_type == 'pancard':
         image = request.files[id]
         filename = id + '_PanCard'
@@ -84,23 +85,17 @@ def get_image(id):
         filename = id + '_DriverLicense'
     loc = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     image.save(loc)
-    cur.execute("INSERT INTO documents values (%s, %s, %s)", [doc_type, id,
-                'Submited'])
-    ocr = OCR(loc, "AIzaSyBdkJThmnTQ_DpX-mR6Q0O8a8xRNIVCaDw")
-    ocr.request_ocr()
-    doc = ocr.parse_ocr(doc_type)
-    json_doc = json.dumps(doc.__dict__)
-    print(json_doc)
-    cur.execute("update documents set content = %s where c_id = %s and type\
-                = %s", [json_doc, id, doc_type])
+    print("Done")
+    cur.execute("insert into documents(type, c_id, status) values(%s,\
+                %s, %s)", [doc_type, id, 'Uploaded'])
     con.commit()
     return "200"
 
 
 @app.route('/user/<id>/docs', methods=['GET'])
-def get_user_docs(name):
+def get_user_docs(id):
     cur = mysql.get_db().cursor()
-    cur.execute("select * from documents where c_id = %s", [int(id)])
+    cur.execute("select * from documents where c_id = %s", [id])
     return convert(cur)
 
 
