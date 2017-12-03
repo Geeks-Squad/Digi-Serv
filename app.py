@@ -74,9 +74,9 @@ def get_rama_image(id):
     con = mysql.connect()
     cur = con.cursor()
     image1 = request.files['PanCard']
-    filename1 = id + '_PanCard' + '.jpg'
+    filename1 = id + '_PanCard'
     image2 = request.files['DrivingLicense']
-    filename2 = id + '_DriverLicense' + '.jpg'
+    filename2 = id + '_DriverLicense'
     loc1 = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
     loc2 = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
     image1.save(loc1)
@@ -99,17 +99,17 @@ def get_image(id):
     print(request.files)
     if doc_type == 'pancard':
         image = request.files[id]
-        filename = id + '_PanCard' + '.jpg'
+        filename = id + '_PanCard'
     else:
         image = request.files[id]
-        filename = id + '_DriverLicense' + '.jpg'
+        filename = id + '_DriverLicense'
     loc = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     image.save(loc)
     print("Done")
     cur.execute("insert into documents(type, c_id, status) values(%s,\
                 %s, %s)", [doc_type, id, 'Uploaded'])
-    cur.execute('insert into transac values (%s, %s, %s, %s, %s)', [id,
-                2, 1, 'Success', 'Pending'])
+    cur.execute('insert into transaction values (%s, %s, %s, %s, %s)', [id,
+                1, 12, 'Submitted', 'Pending'])
     con.commit()
     return "200"
 
@@ -141,10 +141,8 @@ def get_user_doc(c_id, doc_type):
 
 @app.route('/user/<c_id>/<doc_type>/image', methods=['GET'])
 def get_user_doc_image(c_id, doc_type):
-    return send_file(app.config['UPLOAD_FOLDER'] + c_id + '_' + doc_type
-                     + '.jpg', as_attachment=False,
-                     attachment_filename=c_id+'_' + doc_type + '.jpg',
-                     mimetype='image/jpeg')
+    return send_file(app.config['UPLOAD_FOLDER'] + c_id + '_' + doc_type,
+                     as_attachment=False)
 
 
 @app.route('/user/<c_id>/<doc_id>/send/<o_id>', methods=['POST'])
@@ -152,8 +150,8 @@ def get_user_doc_image(c_id, doc_type):
 def send_user_docs_to(c_id, doc_id, o_id):
     con = mysql.connect()
     cur = con.cursor()
-    cur.execute('insert into transac values (%s, %s, %s, %s, %s)', [c_id,
-                doc_id, 1, 'Success', 'Pending'])
+    cur.execute('insert into transaction values (%s, %s, %s, %s)', [c_id,
+                doc_id, o_id, 'Submitted'])
     con.commit()
     return "200"
 
