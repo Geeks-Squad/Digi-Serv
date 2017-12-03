@@ -45,7 +45,7 @@ if __name__ == '__main__':
             doc = ocr.parse_ocr(doc_type)
             json_doc = json.dumps(doc.__dict__)
             cursor = mariadb_connection.cursor()
-            if val > 0.3:
+            if ocr.validate(c_id) and val > 0.3:
                 cursor.execute('update documents set content = ? and status\
                         = ? where c_id = ?', [json_doc, 'Approved', c_id])
             else:

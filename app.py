@@ -7,8 +7,6 @@ from flask import request
 from flask_httpauth import HTTPBasicAuth
 from flaskext.mysql import MySQL
 
-from docs.ocr import OCR
-
 logger = logging.getLogger(__name__)
 
 debug = 0
@@ -37,7 +35,7 @@ auth = HTTPBasicAuth()
 
 def convert(cur, one=False):
     r = [dict((cur.description[i][0], value) for i, value in enumerate(row))
-            for row in cur.fetchall()]
+         for row in cur.fetchall()]
     data = (r[0] if r else None) if one else r
     return json.dumps(data)
 
@@ -76,9 +74,9 @@ def get_rama_image(id):
     con = mysql.connect()
     cur = con.cursor()
     image1 = request.files['PanCard']
-    filename1 = id + '_PanCard'
+    filename1 = id + '_PanCard' + '.jpg'
     image2 = request.files['DrivingLicense']
-    filename2 = id + '_DriverLicense'
+    filename2 = id + '_DriverLicense' + '.jpg'
     loc1 = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
     loc2 = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
     image1.save(loc1)
@@ -141,8 +139,10 @@ def get_user_doc(c_id, doc_type):
 
 @app.route('/user/<c_id>/<doc_type>/image', methods=['GET'])
 def get_user_doc_image(c_id, doc_type):
-    return send_file(app.config['UPLOAD_FOLDER'] + c_id + '_' + doc_type,
-                     as_attachment=False)
+    return send_file(app.config['UPLOAD_FOLDER'] + c_id + '_' + doc_type
+                     + '.jpg', as_attachment=False,
+                     attachment_filename=c_id+'_' + doc_type + '.jpg',
+                     mimetype='image/jpeg')
 
 
 @app.route('/user/<c_id>/<doc_id>/send/<o_id>', methods=['POST'])

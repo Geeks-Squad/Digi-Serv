@@ -52,6 +52,9 @@ class OCR:
                              data[-1])
             return drivl
 
+    def validate(self, c_id):
+        return True
+
 
 if __name__ == '__main__':
     ocr = OCR('/home/vyas/Downloads/IMG_20171201_085752.jpg',
@@ -59,34 +62,3 @@ if __name__ == '__main__':
     ocr.request_ocr()
     ocr.parse_ocr("DrivingLicense")
 
-"""
-if __name__ == '__main__':
-        response = request_ocr(api_key, image_filenames)
-        if response.status_code != 200 or response.json().get('error'):
-            print(response.text)
-        else:
-            for idx, resp in enumerate(response.json()['responses']):
-                # save to JSON file
-                imgname = image_filenames[idx]
-                jpath = join(RESULTS_DIR, basename(imgname) + '.json')
-                with open(jpath, 'w') as f:
-                    datatxt = json.dumps(resp, indent=2)
-                    print("Wrote", len(datatxt), "bytes to", jpath)
-                    f.write(datatxt)
-
-                # print the plaintext to screen for convenience
-                print("---------------------------------------------")
-                t = resp['textAnnotations'][0]
-                print("    Bounding Polygon:")
-                print(t['boundingPoly'])
-                print("    Text:")
-                print(t['description'])"""
-
-"""
-
-    ocr = OCR(loc, "AIzaSyBdkJThmnTQ_DpX-mR6Q0O8a8xRNIVCaDw")
-    ocr.request_ocr()
-    doc = ocr.parse_ocr(doc_type)
-    json_doc = json.dumps(doc.__dict__)
-    print(json_doc)
-"""
