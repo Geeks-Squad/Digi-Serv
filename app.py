@@ -108,6 +108,8 @@ def get_image(id):
     print("Done")
     cur.execute("insert into documents(type, c_id, status) values(%s,\
                 %s, %s)", [doc_type, id, 'Uploaded'])
+    cur.execute('insert into transac values (%s, %s, %s, %s, %s)', [id,
+                2, 1, 'Success', 'Pending'])
     con.commit()
     return "200"
 
@@ -150,8 +152,8 @@ def get_user_doc_image(c_id, doc_type):
 def send_user_docs_to(c_id, doc_id, o_id):
     con = mysql.connect()
     cur = con.cursor()
-    cur.execute('insert into transaction values (%s, %s, %s, %s)', [c_id,
-                doc_id, o_id, 'Submitted'])
+    cur.execute('insert into transac values (%s, %s, %s, %s, %s)', [c_id,
+                doc_id, 1, 'Success', 'Pending'])
     con.commit()
     return "200"
 
