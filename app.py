@@ -108,8 +108,8 @@ def get_image(id):
     print("Done")
     cur.execute("insert into documents(type, c_id, status) values(%s,\
                 %s, %s)", [doc_type, id, 'Uploaded'])
-    cur.execute('insert into transac values (%s, %s, %s, %s, %s)', [id,
-                1, 12, 'Submitted', 'Pending'])
+    cur.execute('insert into transac(c_id, d_id, o_id, deepauth_approval,\
+            govt_approval) values (%s, %s, %s, %s, %s)', [int(id), 1, 12, 'Submitted', 'Pending'])
     con.commit()
     return "200"
 
