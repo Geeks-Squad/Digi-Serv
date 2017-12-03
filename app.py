@@ -99,10 +99,10 @@ def get_image(id):
     print(request.files)
     if doc_type == 'pancard':
         image = request.files[id]
-        filename = id + '_PanCard'
+        filename = id + '_PanCard' + '.jpg'
     else:
         image = request.files[id]
-        filename = id + '_DriverLicense'
+        filename = id + '_DriverLicense' + '.jpg'
     loc = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     image.save(loc)
     print("Done")
